@@ -6,9 +6,7 @@ function ExpenseList({ setSelectedExpense }) {
     const [expenses,setExpenses] = useState([]);
 
     const fetchExpenses = async ()=>{
-
         const res = await API.get("/expenses");
-
         setExpenses(res.data);
     };
 
@@ -25,39 +23,39 @@ function ExpenseList({ setSelectedExpense }) {
 
         <div>
 
-            <h2>Expense List</h2>
+            <h2 className="text-xl font-semibold mb-4">Expenses</h2>
 
-            <table border="1">
+            <table className="w-full border">
 
-                <thead>
-
+                <thead className="bg-gray-200">
                 <tr>
-                    <th>Name</th>
-                    <th>Amount</th>
-                    <th>Date</th>
-                    <th>Action</th>
+                    <th className="p-2">Name</th>
+                    <th className="p-2">Amount</th>
+                    <th className="p-2">Date</th>
+                    <th className="p-2">Action</th>
                 </tr>
-
                 </thead>
 
                 <tbody>
 
                 {expenses.map(expense=>(
-                    <tr key={expense.id}>
+                    <tr key={expense.id} className="text-center border-t">
 
-                        <td>{expense.expenseName}</td>
-                        <td>{expense.amount}</td>
-                        <td>{expense.date}</td>
+                        <td className="p-2">{expense.expenseName}</td>
+                        <td className="p-2">₹ {expense.amount}</td>
+                        <td className="p-2">{expense.date}</td>
 
-                        <td>
+                        <td className="p-2 space-x-2">
 
                             <button
+                                className="bg-yellow-400 px-2 py-1 rounded"
                                 onClick={()=>setSelectedExpense(expense)}
                             >
                                 Edit
                             </button>
 
                             <button
+                                className="bg-red-500 text-white px-2 py-1 rounded"
                                 onClick={()=>deleteExpense(expense.id)}
                             >
                                 Delete
