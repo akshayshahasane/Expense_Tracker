@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import API from "../services/api";
 
 function ExpenseForm({ selectedExpense, refreshExpenses }) {
-
     const [expense, setExpense] = useState({
         expenseName: "",
         amount: "",
@@ -10,34 +9,67 @@ function ExpenseForm({ selectedExpense, refreshExpenses }) {
         description: ""
     });
 
-    useEffect(()=>{
-        if(selectedExpense){
+    useEffect(() => {
+        if (selectedExpense) {
             setExpense(selectedExpense);
+        } else {
+            // Optional: default today's date when adding new expense
+            setExpense(prev => ({ ...prev, date: new Date().toISOString().slice(0, 10) }));
         }
-    },[selectedExpense]);
+    }, [selectedExpense]);
 
-    const handleChange = (e)=>{
-        setExpense({...expense,[e.target.name]:e.target.value});
+    const handleChange = (e) => {
+        setExpense({ ...expense, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = async (e)=>{
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if(selectedExpense){
-            await API.put(`/expenses/${selectedExpense.id}`, expense);
-            alert("Expense Updated");
-        }else{
-            await API.post("/expenses", expense);
-            alert("Expense Added");
+        const userId = localStorage.getItem("userId");
+
+        if (!userId) {
+            alert("User not logged in. Please login first.");
+            return;
         }
 
-        refreshExpenses();
+        if (!expense.expenseName || !expense.amount || !expense.date) {
+            alert("Please fill all required fields.");
+            return;
+        }
+
+        const data = {
+            ...expense,
+            userId: Number(userId),           // Must match backend Long type
+            amount: Number(expense.amount)    // Ensure number for backend
+        };
+
+        try {
+            if (selectedExpense) {
+                await API.put(`/expenses/${selectedExpense.id}`, data);
+                alert("Expense Updated");
+            } else {
+                await API.post("/expenses", data);
+                alert("Expense Added");
+            }
+
+            // Reset form
+            setExpense({
+                expenseName: "",
+                amount: "",
+                date: new Date().toISOString().slice(0, 10),
+                description: ""
+            });
+
+            refreshExpenses();
+
+        } catch (error) {
+            console.error(error.response?.data || error.message);
+            alert("Something went wrong. Check console for details.");
+        }
     };
 
-    return(
-
+    return (
         <div>
-
             <h2 className="text-xl font-semibold mb-4">
                 {selectedExpense ? "Update Expense" : "Add Expense"}
             </h2>
@@ -76,12 +108,11 @@ function ExpenseForm({ selectedExpense, refreshExpenses }) {
                     onChange={handleChange}
                 />
 
-                <button className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+                <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
                     Save
                 </button>
 
             </form>
-
         </div>
     );
 }

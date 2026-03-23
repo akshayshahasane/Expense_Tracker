@@ -22,10 +22,7 @@ function Register() {
         try{
             await API.post("/auth/register", user);
             alert("User Registered Successfully");
-
-            // redirect to login
             navigate("/");
-
         }catch(error){
             alert("Registration Failed");
         }
@@ -33,54 +30,60 @@ function Register() {
 
     return(
 
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600">
+        <div className="h-screen flex items-center justify-center bg-gray-200">
 
-            <div className="bg-white p-8 rounded-2xl shadow-xl w-80 hover:scale-105 transition duration-300">
+            <div className="bg-white p-6 rounded shadow-md w-96">
 
-                <h2 className="text-2xl font-bold text-center mb-6">
-                    Register
+                <h2 className="text-xl font-semibold mb-4">
+                    Register Page
                 </h2>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
 
-                    <input
-                        type="text"
-                        name="name"
-                        placeholder="Name"
-                        className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        onChange={handleChange}
-                    />
+                    {/* Name */}
+                    <div>
+                        <label className="block mb-1">Name:</label>
+                        <input
+                            type="text"
+                            name="name"
+                            className="w-full border p-2 rounded"
+                            onChange={handleChange}
+                        />
+                    </div>
 
-                    <input
-                        type="email"
-                        name="email"
-                        placeholder="Email"
-                        className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        onChange={handleChange}
-                    />
+                    {/* Email */}
+                    <div>
+                        <label className="block mb-1">Email:</label>
+                        <input
+                            type="email"
+                            name="email"
+                            className="w-full border p-2 rounded"
+                            onChange={handleChange}
+                        />
+                    </div>
 
-                    <input
-                        type="password"
-                        name="password"
-                        placeholder="Password"
-                        className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        onChange={handleChange}
-                    />
+                    {/* Password */}
+                    <div>
+                        <label className="block mb-1">Password:</label>
+                        <input
+                            type="password"
+                            name="password"
+                            className="w-full border p-2 rounded"
+                            onChange={handleChange}
+                        />
+                    </div>
 
-                    <button
-                        type="submit"
-                        className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white p-2 rounded hover:opacity-90 transition"
-                    >
+                    {/* Button */}
+                    <button className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">
                         Register
                     </button>
 
                 </form>
 
                 {/* Login Link */}
-                <p className="text-center mt-4 text-sm">
-                    Already have an account?{" "}
-                    <Link to="/" className="text-blue-500 font-semibold">
-                        Login here
+                <p className="text-center mt-4">
+                    <Link to="/" className="text-blue-600">
+                        Already have an account? Login here
                     </Link>
                 </p>
 

@@ -25,13 +25,13 @@ public class UserService {
     }
 
     // Login User
-    public String loginUser(LoginRequest request){
+    public User loginUser(LoginRequest request){
 
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if(passwordEncoder.matches(request.getPassword(), user.getPassword())){
-            return "Login Successful";
+            return user; // ✅ important
         }
 
         throw new RuntimeException("Invalid Password");

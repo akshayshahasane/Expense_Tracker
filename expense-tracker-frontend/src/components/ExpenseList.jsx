@@ -1,75 +1,90 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import API from "../services/api";
 
-function ExpenseList({ setSelectedExpense }) {
+function ExpenseList({ expenses = [], setSelectedExpense, refreshExpenses }) {
+    const [filterDate, setFilterDate] = useState(""); // State to store the filter date
 
-    const [expenses,setExpenses] = useState([]);
-
-    const fetchExpenses = async ()=>{
-        const res = await API.get("/expenses");
-        setExpenses(res.data);
+    const deleteExpense = async (id) => {
+        try {
+            await API.delete(`/expenses/${id}`);
+            refreshExpenses(); // refresh the list after deletion
+        } catch (error) {
+            console.error("Failed to delete expense:", error.response?.data || error.message);
+            alert("Failed to delete expense");
+        }
     };
 
-    useEffect(()=>{
-        fetchExpenses();
-    },[]);
+    // Filter expenses based on the selected date
+    const filteredExpenses = filterDate
+        ? expenses.filter(
+            (expense) =>
+                new Date(expense.date).toDateString() ===
+                new Date(filterDate).toDateString()
+        )
+        : expenses;
 
-    const deleteExpense = async (id)=>{
-        await API.delete(`/expenses/${id}`);
-        fetchExpenses();
-    };
-
-    return(
-
+    return (
         <div>
-
             <h2 className="text-xl font-semibold mb-4">Expenses</h2>
 
-            <table className="w-full border">
+            {/* Date Filter Input */}
+            <div className="mb-4">
+                <label className="mr-2 font-medium">Filter by Date:</label>
+                <input
+                    type="date"
+                    value={filterDate}
+                    onChange={(e) => setFilterDate(e.target.value)}
+                    className="border px-2 py-1 rounded"
+                />
+                <button
+                    className="ml-2 bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-600"
+                    onClick={() => setFilterDate("")} // Reset filter
+                >
+                    Reset
+                </button>
+            </div>
 
-                <thead className="bg-gray-200">
-                <tr>
-                    <th className="p-2">Name</th>
-                    <th className="p-2">Amount</th>
-                    <th className="p-2">Date</th>
-                    <th className="p-2">Action</th>
-                </tr>
-                </thead>
-
-                <tbody>
-
-                {expenses.map(expense=>(
-                    <tr key={expense.id} className="text-center border-t">
-
-                        <td className="p-2">{expense.expenseName}</td>
-                        <td className="p-2">₹ {expense.amount}</td>
-                        <td className="p-2">{expense.date}</td>
-
-                        <td className="p-2 space-x-2">
-
-                            <button
-                                className="bg-yellow-400 px-2 py-1 rounded"
-                                onClick={()=>setSelectedExpense(expense)}
-                            >
-                                Edit
-                            </button>
-
-                            <button
-                                className="bg-red-500 text-white px-2 py-1 rounded"
-                                onClick={()=>deleteExpense(expense.id)}
-                            >
-                                Delete
-                            </button>
-
-                        </td>
-
+            {filteredExpenses.length === 0 ? (
+                <p>No expenses found.</p>
+            ) : (
+                <table className="w-full border-collapse border">
+                    <thead>
+                    <tr className="bg-gray-200">
+                        <th className="border px-2 py-1">Name</th>
+                        <th className="border px-2 py-1">Amount</th>
+                        <th className="border px-2 py-1">Date</th>
+                        <th className="border px-2 py-1">Description</th>
+                        <th className="border px-2 py-1">Actions</th>
                     </tr>
-                ))}
-
-                </tbody>
-
-            </table>
-
+                    </thead>
+                    <tbody>
+                    {filteredExpenses.map((expense) => (
+                        <tr key={expense.id} className="text-center">
+                            <td className="border px-2 py-1">{expense.expenseName}</td>
+                            <td className="border px-2 py-1">₹ {expense.amount}</td>
+                            <td className="border px-2 py-1">
+                                {new Date(expense.date).toLocaleDateString()}
+                            </td>
+                            <td className="border px-2 py-1">{expense.description}</td>
+                            <td className="border px-2 py-1 space-x-2">
+                                <button
+                                    className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600"
+                                    onClick={() => setSelectedExpense(expense)}
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                                    onClick={() => deleteExpense(expense.id)}
+                                >
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            )}
         </div>
     );
 }

@@ -15,64 +15,72 @@ function Login(){
         setLogin({...login,[e.target.name]:e.target.value});
     };
 
-    const handleSubmit = async (e)=>{
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        try{
-            const res = await API.post("/auth/login",login);
+        try {
+            const res = await API.post("/auth/login", login);
 
-            alert(res.data);
+            // Always log the actual data
+            console.log("LOGIN RESPONSE:", res.data); // { message: "...", userId: ... }
 
-            // redirect to dashboard after login
+            // Correct key from your DTO
+            localStorage.setItem("userId", res.data.userId);
+
+            alert(res.data.message); // Use message from backend
             navigate("/dashboard");
 
-        }catch(error){
+        } catch (error) {
+            console.error(error.response?.data || error.message);
             alert("Invalid Credentials");
         }
     };
 
     return(
 
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600">
+        <div className="h-screen flex items-center justify-center bg-gray-200">
 
-            <div className="bg-white p-8 rounded-2xl shadow-xl w-80 hover:scale-105 transition duration-300">
+            <div className="bg-white p-6 rounded shadow-md w-96">
 
-                <h2 className="text-2xl font-bold text-center mb-6">
-                    Login
+                <h2 className="text-xl font-semibold mb-4">
+                    Login Page
                 </h2>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
 
-                    <input
-                        type="email"
-                        name="email"
-                        placeholder="Email"
-                        className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        onChange={handleChange}
-                    />
+                    {/* Username */}
+                    <div>
+                        <label className="block mb-1">Username:</label>
+                        <input
+                            type="email"
+                            name="email"
+                            className="w-full border p-2 rounded"
+                            onChange={handleChange}
+                        />
+                    </div>
 
-                    <input
-                        type="password"
-                        name="password"
-                        placeholder="Password"
-                        className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        onChange={handleChange}
-                    />
+                    {/* Password */}
+                    <div>
+                        <label className="block mb-1">Password:</label>
+                        <input
+                            type="password"
+                            name="password"
+                            className="w-full border p-2 rounded"
+                            onChange={handleChange}
+                        />
+                    </div>
 
-                    <button
-                        type="submit"
-                        className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white p-2 rounded hover:opacity-90 transition"
-                    >
+                    {/* Button */}
+                    <button className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">
                         Login
                     </button>
 
                 </form>
 
                 {/* Register Link */}
-                <p className="text-center mt-4 text-sm">
-                    New user?{" "}
-                    <Link to="/register" className="text-blue-500 font-semibold">
-                        Register here
+                <p className="text-center mt-4">
+                    <Link to="/register" className="text-blue-600">
+                        New user? Register here
                     </Link>
                 </p>
 
@@ -83,4 +91,3 @@ function Login(){
 }
 
 export default Login;
-

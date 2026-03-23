@@ -1,6 +1,7 @@
 package com.project.Expense_Tracker.controller;
 
 import com.project.Expense_Tracker.dto.LoginRequest;
+import com.project.Expense_Tracker.dto.LoginResponse;
 import com.project.Expense_Tracker.entity.User;
 import com.project.Expense_Tracker.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +19,16 @@ public class UserController {
     // Register User
     @PostMapping("/register")
     public User registerUser(@RequestBody User user){
+
         return userService.registerUser(user);
     }
 
     // Login User
     @PostMapping("/login")
-    public String loginUser(@RequestBody LoginRequest request){
-        return userService.loginUser(request);
+    public LoginResponse loginUser(@RequestBody LoginRequest request){
+
+        User user = userService.loginUser(request);
+
+        return new LoginResponse("Login Successful", user.getId());
     }
 }

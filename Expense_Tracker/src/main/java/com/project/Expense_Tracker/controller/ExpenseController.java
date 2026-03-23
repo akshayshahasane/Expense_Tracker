@@ -1,5 +1,6 @@
 package com.project.Expense_Tracker.controller;
 
+import com.project.Expense_Tracker.dto.ExpenseRequest;
 import com.project.Expense_Tracker.entity.Expense;
 import com.project.Expense_Tracker.service.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +18,22 @@ public class ExpenseController {
 
     // Add Expense
     @PostMapping
-    public Expense addExpense(@RequestBody Expense expense){
-        return expenseService.addExpense(expense);
+    public Expense addExpense(@RequestBody ExpenseRequest request){
+
+
+        try {
+            return expenseService.addExpense(request);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
     // Get All Expenses
     @GetMapping
-    public List<Expense> getAllExpenses(){
-        return expenseService.getAllExpenses();
+    public List<Expense> getExpensesByUser(@RequestParam Long userId){
+        return expenseService.getExpensesByUserId(userId);
     }
 
     // Get Expense By id
